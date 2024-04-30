@@ -52,8 +52,7 @@ class Grid:
     def __eq__(self, other) -> bool:
         try:
             return self.shape == other.shape and all(
-                self[position] == other[position]
-                for position in self.area.positions()
+                self[position] == other[position] for position in self.area.positions()
             )
         except AttributeError:
             return NotImplemented
@@ -85,9 +84,7 @@ class Grid:
         except IndexError:
             return factory()
 
-    def __getitem__(
-        self, position: Union[Position, Tuple[int, int]]
-    ) -> GridObject:
+    def __getitem__(self, position: Union[Position, Tuple[int, int]]) -> GridObject:
         try:
             position = cast(Position, position)
             y, x = position.yx
@@ -97,9 +94,7 @@ class Grid:
 
         return self.objects[y][x]
 
-    def __setitem__(
-        self, position: Union[Position, Tuple[int, int]], obj: GridObject
-    ):
+    def __setitem__(self, position: Union[Position, Tuple[int, int]], obj: GridObject):
         try:
             position = cast(Position, position)
             y, x = position.yx

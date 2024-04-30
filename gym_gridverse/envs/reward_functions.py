@@ -490,9 +490,7 @@ def getting_closer_shortest_path(
             )
             for y in range(state.grid.shape.height)
         )
-        distance_array = dijkstra(
-            layout, (object_position.y, object_position.x)
-        )
+        distance_array = dijkstra(layout, (object_position.y, object_position.x))
         return distance_array[state.agent.position.y, state.agent.position.x]
 
     distance_prev = _distance_agent_object(state)
@@ -650,21 +648,21 @@ def reach_exit_memory(
     # TODO: test
 
     agent_grid_object = next_state.grid[next_state.agent.position]
+
+    if not isinstance(agent_grid_object, Exit):
+        return 0.0
+
     grid_objects = (
-        next_state.grid[position]
-        for position in next_state.grid.area.positions()
+        next_state.grid[position] for position in next_state.grid.area.positions()
     )
-    beacon_color = next(
-        grid_object.color
-        for grid_object in grid_objects
-        if isinstance(grid_object, Beacon)
+    beacons = (
+        grid_object for grid_object in grid_objects if isinstance(grid_object, Beacon)
     )
 
-    return (
-        (reward_good if agent_grid_object.color is beacon_color else reward_bad)
-        if isinstance(agent_grid_object, Exit)
-        else 0.0
-    )
+    exit_color = agent_grid_object.color
+    beacon_color = next(beacons).color
+
+    return reward_good if exit_color is beacon_color else reward_bad
 
 
 def factory(name: str, **kwargs) -> RewardFunction:
@@ -678,16 +676,12 @@ def factory(name: str, **kwargs) -> RewardFunction:
     signature = inspect.signature(function)
     required_keys = [
         parameter.name
-        for parameter in reward_function_registry.get_nonprotocol_parameters(
-            signature
-        )
+        for parameter in reward_function_registry.get_nonprotocol_parameters(signature)
         if parameter.default is inspect.Parameter.empty
     ]
     optional_keys = [
         parameter.name
-        for parameter in reward_function_registry.get_nonprotocol_parameters(
-            signature
-        )
+        for parameter in reward_function_registry.get_nonprotocol_parameters(signature)
         if parameter.default is not inspect.Parameter.empty
     ]
 

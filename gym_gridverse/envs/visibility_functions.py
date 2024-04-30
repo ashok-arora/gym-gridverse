@@ -125,9 +125,7 @@ def fully_transparent(
     return np.ones((grid.shape.height, grid.shape.width), dtype=bool)
 
 
-def _partially_occluded_make_visible(
-    visibility, grid, position, next_positions
-):
+def _partially_occluded_make_visible(visibility, grid, position, next_positions):
     if grid.area.contains(position) and not visibility[position.y, position.x]:
         visibility[position.y, position.x] = True
         if not grid[position].blocks_vision:
@@ -155,15 +153,16 @@ def _partially_occluded_next_positions_front_right(position):
 
 @visibility_function_registry.register
 def partially_occluded(
-    grid: Grid, position: Position, *, rng: Optional[rnd.Generator] = None
+    grid: Grid,
+    position: Position,
+    *,
+    rng: Optional[rnd.Generator] = None,
 ) -> np.ndarray:
     if position.y != grid.shape.height - 1:
         # TODO generalize for this case
         raise NotImplementedError
 
-    visibility_left = np.zeros(
-        (grid.shape.height, grid.shape.width), dtype=bool
-    )
+    visibility_left = np.zeros((grid.shape.height, grid.shape.width), dtype=bool)
     _partially_occluded_make_visible(
         visibility_left,
         grid,
@@ -171,9 +170,7 @@ def partially_occluded(
         _partially_occluded_next_positions_front_left,
     )
 
-    visibility_right = np.zeros(
-        (grid.shape.height, grid.shape.width), dtype=bool
-    )
+    visibility_right = np.zeros((grid.shape.height, grid.shape.width), dtype=bool)
     _partially_occluded_make_visible(
         visibility_right,
         grid,
