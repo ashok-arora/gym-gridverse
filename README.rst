@@ -252,7 +252,7 @@ If you use `gym-gridverse`, please cite it:
 .. code-block:: bibtex
 
   @misc{baisero2021gym-gridverse,
-      author = {Andrea Baisero and Sammie Katt},
+      author = {Andrea Baisero and Sammie Katt and Christopher Amato},
       title = {gym-gridverse: Gridworld domains for fully and partially observable reinforcement learning},
       year = {2021},
       publisher = {GitHub},
