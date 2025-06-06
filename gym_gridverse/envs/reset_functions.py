@@ -595,7 +595,7 @@ def memory_rooms(
 
 
 @reset_function_registry.register
-def coin_maze(shape: Shape, num_coins: int,*, rng: Optional[rnd.Generator] = None) -> State:
+def coin_maze(shape: Shape, num_coins: int, ordered: bool, *, rng: Optional[rnd.Generator] = None) -> State:
     """creates a maze with collectible coins"""
 
     # must call this to include reproduceable stochasticity
@@ -611,7 +611,10 @@ def coin_maze(shape: Shape, num_coins: int,*, rng: Optional[rnd.Generator] = Non
     selected_positions = floor_positions_array[selected_indices]
 
     for idx, pos in enumerate(selected_positions):
-        grid[pos] = Coin(idx)
+        if ordered:
+            grid[pos] = Coin(idx)
+        else:
+            grid[pos] = Coin()
 
 
     # randomized agent position and orientation
