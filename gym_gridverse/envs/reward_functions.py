@@ -19,6 +19,7 @@ from gym_gridverse.grid_object import (
     GridObject,
     MovingObstacle,
     Wall,
+    Coin,
 )
 from gym_gridverse.state import State
 from gym_gridverse.utils.custom import import_if_custom
@@ -40,8 +41,7 @@ class RewardFunction(Protocol):
         next_state: State,
         *,
         rng: Optional[rnd.Generator] = None,
-    ) -> float:
-        ...
+    ) -> float: ...
 
 
 RewardReductionFunction = Callable[[Iterator[float]], float]
@@ -412,9 +412,7 @@ def getting_closer(
     return (
         reward_closer
         if distance_next < distance_prev
-        else reward_further
-        if distance_next > distance_prev
-        else 0.0
+        else reward_further if distance_next > distance_prev else 0.0
     )
 
 
@@ -490,7 +488,9 @@ def getting_closer_shortest_path(
             )
             for y in range(state.grid.shape.height)
         )
-        distance_array = dijkstra(layout, (object_position.y, object_position.x))
+        distance_array = dijkstra(
+            layout, (object_position.y, object_position.x)
+        )
         return distance_array[state.agent.position.y, state.agent.position.x]
 
     distance_prev = _distance_agent_object(state)
@@ -499,9 +499,7 @@ def getting_closer_shortest_path(
     return (
         reward_closer
         if distance_next < distance_prev
-        else reward_further
-        if distance_next > distance_prev
-        else 0.0
+        else reward_further if distance_next > distance_prev else 0.0
     )
 
 
@@ -580,9 +578,7 @@ def actuate_door(
     return (
         reward_open
         if not door.is_open and next_door.is_open
-        else reward_close
-        if door.is_open and not next_door.is_open
-        else 0.0
+        else reward_close if door.is_open and not next_door.is_open else 0.0
     )
 
 
@@ -616,9 +612,7 @@ def pickndrop(
     return (
         reward_pick
         if not has_key and next_has_key
-        else reward_drop
-        if has_key and not next_has_key
-        else 0.0
+        else reward_drop if has_key and not next_has_key else 0.0
     )
 
 
@@ -648,21 +642,38 @@ def reach_exit_memory(
     # TODO: test
 
     agent_grid_object = next_state.grid[next_state.agent.position]
-
-    if not isinstance(agent_grid_object, Exit):
-        return 0.0
-
     grid_objects = (
-        next_state.grid[position] for position in next_state.grid.area.positions()
+        next_state.grid[position]
+        for position in next_state.grid.area.positions()
     )
-    beacons = (
-        grid_object for grid_object in grid_objects if isinstance(grid_object, Beacon)
+    beacon_color = next(
+        grid_object.color
+        for grid_object in grid_objects
+        if isinstance(grid_object, Beacon)
     )
 
-    exit_color = agent_grid_object.color
-    beacon_color = next(beacons).color
+    return (
+        (reward_good if agent_grid_object.color is beacon_color else reward_bad)
+        if isinstance(agent_grid_object, Exit)
+        else 0.0
+    )
 
-    return reward_good if exit_color is beacon_color else reward_bad
+
+@reward_function_registry.register
+def collect_coin_reward(
+    state: State,
+    action: Action,
+    next_state: State,
+    *,
+    reward: float = 1.0,
+    rng: Optional[rnd.Generator] = None,
+):
+    """gives reward if a coin was collected"""
+    return (
+        reward
+        if isinstance(state.grid[next_state.agent.position], Coin)
+        else 0.0
+    )
 
 
 def factory(name: str, **kwargs) -> RewardFunction:
@@ -676,12 +687,16 @@ def factory(name: str, **kwargs) -> RewardFunction:
     signature = inspect.signature(function)
     required_keys = [
         parameter.name
-        for parameter in reward_function_registry.get_nonprotocol_parameters(signature)
+        for parameter in reward_function_registry.get_nonprotocol_parameters(
+            signature
+        )
         if parameter.default is inspect.Parameter.empty
     ]
     optional_keys = [
         parameter.name
-        for parameter in reward_function_registry.get_nonprotocol_parameters(signature)
+        for parameter in reward_function_registry.get_nonprotocol_parameters(
+            signature
+        )
         if parameter.default is not inspect.Parameter.empty
     ]
 

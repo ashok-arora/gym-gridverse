@@ -67,6 +67,7 @@ The following reward functions are provided:
 * :code:`getting_closer` -- Rewards for moving closer to/further from a GridObject type.
 * :code:`actuate_door` -- Rewards for actuating a Door.
 * :code:`pickndrop` -- Rewards for picking and/or dropping GridObject types.
+* :code:`collect_coin_reward` -- Rewards for collecting a Coin.
 
 The following observation functions are provided:
 
