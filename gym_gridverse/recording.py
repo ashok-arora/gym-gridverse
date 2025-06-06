@@ -94,7 +94,7 @@ class HUD_Info(TypedDict):
 
 
 def generate_images(
-    data: Union[Data[State], Data[Observation], Data[Image]]
+    data: Union[Data[State], Data[Observation], Data[Image]],
 ) -> Iterator[Image]:
     """Generate images associated with the input data"""
 

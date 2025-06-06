@@ -27,8 +27,7 @@ from gym_gridverse.utils.registry import FunctionRegistry
 class ObservationFunction(Protocol):
     def __call__(
         self, state: State, *, rng: Optional[rnd.Generator] = None
-    ) -> Observation:
-        ...
+    ) -> Observation: ...
 
 
 class ObservationFunctionRegistry(FunctionRegistry):

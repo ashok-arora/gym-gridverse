@@ -37,7 +37,9 @@ def actual_rotation(
     return (
         reward_clockwise
         if rotation in _clockwise_rotations
-        else reward_counterclockwise
-        if rotation in _counterclockwise_rotations
-        else 0.0
+        else (
+            reward_counterclockwise
+            if rotation in _counterclockwise_rotations
+            else 0.0
+        )
     )

@@ -1,4 +1,5 @@
-""" Tests Grid Object behavior and properties """
+"""Tests Grid Object behavior and properties"""
+
 import unittest
 from typing import Type
 

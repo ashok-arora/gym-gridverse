@@ -21,6 +21,7 @@ from gym_gridverse.geometry import Orientation, Position, Shape
 from gym_gridverse.grid import Grid
 from gym_gridverse.grid_object import (
     Beacon,
+    Coin,
     Color,
     Door,
     Exit,
@@ -30,7 +31,6 @@ from gym_gridverse.grid_object import (
     MovingObstacle,
     Telepod,
     Wall,
-    Coin,
 )
 from gym_gridverse.rng import choice, choices, get_gv_rng_if_none, shuffle
 from gym_gridverse.state import State
@@ -43,8 +43,7 @@ from gym_gridverse.utils.registry import FunctionRegistry
 class ResetFunction(Protocol):
     """Signature that all reset functions must follow"""
 
-    def __call__(self, *, rng: Optional[rnd.Generator] = None) -> State:
-        ...
+    def __call__(self, *, rng: Optional[rnd.Generator] = None) -> State: ...
 
 
 class ResetFunctionRegistry(FunctionRegistry):
@@ -595,7 +594,13 @@ def memory_rooms(
 
 
 @reset_function_registry.register
-def coin_maze(shape: Shape, num_coins: int, ordered: bool, *, rng: Optional[rnd.Generator] = None) -> State:
+def coin_maze(
+    shape: Shape,
+    num_coins: int,
+    ordered: bool,
+    *,
+    rng: Optional[rnd.Generator] = None,
+) -> State:
     """creates a maze with collectible coins"""
 
     # must call this to include reproduceable stochasticity
@@ -604,10 +609,16 @@ def coin_maze(shape: Shape, num_coins: int, ordered: bool, *, rng: Optional[rnd.
     grid = Grid.from_shape((shape.height, shape.width))
     draw_area(grid, grid.area, Wall, fill=False)
 
-    floor_positions = [pos for pos in grid.area.positions() if isinstance(grid[pos], Floor)]
+    floor_positions = [
+        pos for pos in grid.area.positions() if isinstance(grid[pos], Floor)
+    ]
     floor_positions_array = np.array(floor_positions)
 
-    selected_indices = rng.choice(len(floor_positions_array), size=min(num_coins, len(floor_positions_array)), replace=False)
+    selected_indices = rng.choice(
+        len(floor_positions_array),
+        size=min(num_coins, len(floor_positions_array)),
+        replace=False,
+    )
     selected_positions = floor_positions_array[selected_indices]
 
     for idx, pos in enumerate(selected_positions):
@@ -616,14 +627,16 @@ def coin_maze(shape: Shape, num_coins: int, ordered: bool, *, rng: Optional[rnd.
         else:
             grid[pos] = Coin()
 
-
     # randomized agent position and orientation
     agent_position = choice(
         rng,
         [
             position
             for position in grid.area.positions()
-            if not (isinstance(grid[position], Coin) or isinstance(grid[position], Wall))
+            if not (
+                isinstance(grid[position], Coin)
+                or isinstance(grid[position], Wall)
+            )
         ],
     )
     agent_orientation = choice(rng, list(Orientation))

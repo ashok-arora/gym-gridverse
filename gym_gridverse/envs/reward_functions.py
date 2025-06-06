@@ -14,12 +14,12 @@ from gym_gridverse.envs.utils import get_next_position
 from gym_gridverse.geometry import DistanceFunction, Position
 from gym_gridverse.grid_object import (
     Beacon,
+    Coin,
     Door,
     Exit,
     GridObject,
     MovingObstacle,
     Wall,
-    Coin,
 )
 from gym_gridverse.state import State
 from gym_gridverse.utils.custom import import_if_custom

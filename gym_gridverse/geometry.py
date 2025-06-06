@@ -145,12 +145,10 @@ class Position:
             ) from error
 
     @overload
-    def __add__(self, other: Position) -> Position:
-        ...
+    def __add__(self, other: Position) -> Position: ...
 
     @overload
-    def __add__(self, other: Area) -> Area:
-        ...
+    def __add__(self, other: Area) -> Area: ...
 
     def __add__(self, other: Union[Position, Area]) -> Union[Position, Area]:
         if isinstance(other, Position):
@@ -199,16 +197,13 @@ class Orientation(enum.Enum):
     R = RIGHT
 
     @overload
-    def __mul__(self, other: Orientation) -> Orientation:
-        ...
+    def __mul__(self, other: Orientation) -> Orientation: ...
 
     @overload
-    def __mul__(self, other: Position) -> Position:
-        ...
+    def __mul__(self, other: Position) -> Position: ...
 
     @overload
-    def __mul__(self, other: Area) -> Area:
-        ...
+    def __mul__(self, other: Area) -> Area: ...
 
     def __mul__(
         self, other: Union[Orientation, Position, Area]
@@ -283,20 +278,16 @@ class Transform:
     orientation: Orientation
 
     @overload
-    def __mul__(self, other: Transform) -> Transform:
-        ...
+    def __mul__(self, other: Transform) -> Transform: ...
 
     @overload
-    def __mul__(self, other: Position) -> Position:
-        ...
+    def __mul__(self, other: Position) -> Position: ...
 
     @overload
-    def __mul__(self, other: Area) -> Area:
-        ...
+    def __mul__(self, other: Area) -> Area: ...
 
     @overload
-    def __mul__(self, other: Orientation) -> Orientation:
-        ...
+    def __mul__(self, other: Orientation) -> Orientation: ...
 
     def __mul__(
         self, other: Union[Transform, Position, Area, Orientation]

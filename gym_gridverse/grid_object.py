@@ -1,4 +1,5 @@
-""" Every cell in the grid is represented by a grid objects """
+"""Every cell in the grid is represented by a grid objects"""
+
 from __future__ import annotations
 
 import abc

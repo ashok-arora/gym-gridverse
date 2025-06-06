@@ -17,7 +17,5 @@ def intended_rotation(
     return (
         reward_clockwise
         if action is Action.TURN_RIGHT
-        else reward_counterclockwise
-        if action is Action.TURN_LEFT
-        else 0.0
+        else reward_counterclockwise if action is Action.TURN_LEFT else 0.0
     )

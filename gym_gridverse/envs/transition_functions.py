@@ -13,13 +13,13 @@ from gym_gridverse.envs.utils import get_next_position
 from gym_gridverse.geometry import Orientation, get_manhattan_boundary
 from gym_gridverse.grid_object import (
     Box,
+    Coin,
     Door,
     Floor,
     Key,
     MovingObstacle,
     NoneGridObject,
     Telepod,
-    Coin,
 )
 from gym_gridverse.rng import get_gv_rng_if_none
 from gym_gridverse.state import State

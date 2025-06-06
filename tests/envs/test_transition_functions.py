@@ -1,4 +1,4 @@
-""" Tests state dynamics """
+"""Tests state dynamics"""
 
 import copy
 from typing import List
