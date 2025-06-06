@@ -15,7 +15,7 @@ observation_space:
   colors: [ NONE ]
 
 reset_function:
-  name: coin_maze_unordered
+  name: coin_maze
   shape: [ 7, 7 ]
   num_coins: 3
   ordered: false

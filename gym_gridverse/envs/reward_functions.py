@@ -660,6 +660,43 @@ def reach_exit_memory(
 
 
 @reward_function_registry.register
+def collect_coin_reward_ordered(
+    state: State,
+    action: Action,
+    next_state: State,
+    *,
+    reward_good: float = 1.0,
+    reward_bad: float = -1.0,
+    rng: Optional[rnd.Generator] = None,
+):
+    """Gives reward_good if the correct coin in order is collected, else reward_bad"""
+
+    # Case 1: First coin (order 0)
+    if state.agent.grid_object != next_state.agent.grid_object:
+        if isinstance(next_state.agent.grid_object, Coin):
+            if next_state.agent.grid_object.order == 0:
+                return reward_good
+            else:
+                return reward_bad
+
+        # Case 2: Subsequent coins must be in increasing order
+        if (
+            isinstance(state.agent.grid_object, Coin)
+            and isinstance(next_state.agent.grid_object, Coin)
+        ):
+            if (
+                next_state.agent.grid_object.order
+                == state.agent.grid_object.order + 1
+            ):
+                return reward_good
+            else:
+                return reward_bad
+
+    # No coin collected
+    return 0.0    
+
+
+@reward_function_registry.register
 def collect_coin_reward(
     state: State,
     action: Action,

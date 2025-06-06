@@ -28,7 +28,9 @@ transition_functions:
 reward_functions:
   - name: living_reward
     reward: -0.1
-  - name: collect_coin_reward
+  - name: collect_coin_reward_ordered
+    reward_good: 5.0
+    reward_bad: -5.0
 
 observation_function:
   name: partially_occluded
