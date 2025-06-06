@@ -55,6 +55,7 @@ The following transition functions are provided:
 * :code:`actuate_box` -- Opens a Box.
 * :code:`move_obstacles` -- Lets MovingObstacle objects move.
 * :code:`teleport` -- Teleports the agent across the Telepods.
+* :code:`collect_coin_transition` -- Collects a Coin and removes it from the grid.
 
 The following reward functions are provided:
 

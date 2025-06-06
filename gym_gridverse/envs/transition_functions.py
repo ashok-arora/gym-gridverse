@@ -1,4 +1,5 @@
-""" Functions to model dynamics """
+"""Functions to model dynamics"""
+
 import inspect
 import warnings
 from functools import partial
@@ -18,6 +19,7 @@ from gym_gridverse.grid_object import (
     MovingObstacle,
     NoneGridObject,
     Telepod,
+    Coin,
 )
 from gym_gridverse.rng import get_gv_rng_if_none
 from gym_gridverse.state import State
@@ -40,8 +42,7 @@ class TransitionFunction(Protocol):
         action: Action,
         *,
         rng: Optional[rnd.Generator] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class TransitionFunctionRegistry(FunctionRegistry):
@@ -415,6 +416,21 @@ def teleport(
         ]
         i = rng.choice(len(positions))
         state.agent.position = positions[i]
+
+
+@transition_function_registry.register
+def collect_coin_transition(
+    state: State,
+    action: Action,
+    *,
+    rng: Optional[rnd.Generator] = None,
+):
+    """collects and removes coins"""
+
+    if isinstance(state.grid[state.agent.position], Coin):
+        state.agent.grid_object = Coin(state.grid[state.agent.position].order)
+
+        state.grid[state.agent.position] = Floor()
 
 
 def factory(name: str, **kwargs) -> TransitionFunction:
