@@ -44,6 +44,7 @@ The following `GridObjects` are provided:
 * :code:`MovingObstacle` -- An obstacle which moves autonomously.
 * :code:`Box` -- A container of other `GridObjects`.
 * :code:`Telepod` -- A teleporting tile.
+* :code:`Coin` -- A collectible tile with optional ordering.
 
 The following transition functions are provided:
 

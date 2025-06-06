@@ -30,6 +30,7 @@ from gym_gridverse.grid_object import (
     MovingObstacle,
     Telepod,
     Wall,
+    Coin,
 )
 from gym_gridverse.rng import choice, choices, get_gv_rng_if_none, shuffle
 from gym_gridverse.state import State
@@ -589,6 +590,41 @@ def memory_rooms(
     exit_positions = positions[1 + num_beacons :]
     for exit_position, exit_color in zip(exit_positions, sample_colors):
         grid[exit_position] = Exit(exit_color)
+
+    return State(grid, agent)
+
+
+@reset_function_registry.register
+def coin_maze(shape: Shape, num_coins: int,*, rng: Optional[rnd.Generator] = None) -> State:
+    """creates a maze with collectible coins"""
+
+    # must call this to include reproduceable stochasticity
+    rng = get_gv_rng_if_none(rng)
+
+    grid = Grid.from_shape((shape.height, shape.width))
+    draw_area(grid, grid.area, Wall, fill=False)
+
+    floor_positions = [pos for pos in grid.area.positions() if isinstance(grid[pos], Floor)]
+    floor_positions_array = np.array(floor_positions)
+
+    selected_indices = rng.choice(len(floor_positions_array), size=min(num_coins, len(floor_positions_array)), replace=False)
+    selected_positions = floor_positions_array[selected_indices]
+
+    for idx, pos in enumerate(selected_positions):
+        grid[pos] = Coin(idx)
+
+
+    # randomized agent position and orientation
+    agent_position = choice(
+        rng,
+        [
+            position
+            for position in grid.area.positions()
+            if not (isinstance(grid[position], Coin) or isinstance(grid[position], Wall))
+        ],
+    )
+    agent_orientation = choice(rng, list(Orientation))
+    agent = Agent(agent_position, agent_orientation)
 
     return State(grid, agent)
 
