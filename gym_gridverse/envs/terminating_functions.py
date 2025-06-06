@@ -8,7 +8,7 @@ from typing_extensions import Protocol  # python3.7 compatibility
 
 from gym_gridverse.action import Action
 from gym_gridverse.envs.utils import get_next_position
-from gym_gridverse.grid_object import Exit, GridObject, MovingObstacle, Wall
+from gym_gridverse.grid_object import Exit, GridObject, MovingObstacle, Wall, Coin
 from gym_gridverse.state import State
 from gym_gridverse.utils.custom import import_if_custom
 from gym_gridverse.utils.functions import checkraise_kwargs, select_kwargs
@@ -324,6 +324,45 @@ def bump_into_wall(
 
     return state.grid.area.contains(next_position) and isinstance(
         state.grid[next_position], Wall
+    )
+
+@terminating_function_registry.register
+def incorrect_order_coins(
+    state: State,
+    action: Action,
+    next_state: State,
+    *,
+    rng: Optional[rnd.Generator] = None,
+):
+    """terminating condition for Agent collecting a Coin with incorrect order"""
+
+    if state.agent.grid_object != next_state.agent.grid_object:
+        if isinstance(next_state.agent.grid_object, Coin):
+            if next_state.agent.grid_object.order != 0:
+                return True
+    elif state.agent.grid_object == next_state.agent.grid_object:
+        if isinstance(next_state.agent.grid_object, Coin) and isinstance(state.agent.grid_object, Coin) and next_state.agent.grid_object.order != state.agent.grid_object.order: 
+            if next_state.agent.grid_object.order != state.agent.grid_object.order + 1:
+                return True
+
+    return not any(
+        isinstance(next_state.grid[position], Coin)
+        for position in next_state.grid.area.positions()
+    )
+        
+
+@terminating_function_registry.register
+def no_more_coins(
+    state: State,
+    action: Action,
+    next_state: State,
+    *,
+    rng: Optional[rnd.Generator] = None,
+):
+    """terminates episodes if all coins are collected"""
+    return not any(
+        isinstance(next_state.grid[position], Coin)
+        for position in next_state.grid.area.positions()
     )
 
 

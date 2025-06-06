@@ -84,6 +84,8 @@ The following terminating functions are provided:
 * :code:`reach_exit` -- Terminates if the agent reaches an Exit.
 * :code:`bump_moving_obstacle` -- Terminates if the agent bumps into a MovingObstacle.
 * :code:`bump_into_wall` -- Terminates if the agent bumps into a Wall.
+* :code:`no_more_coins` -- Terminates if the agent collects all the Coins.
+* :code:`incorrect_order_coins` -- Terminates if the agent collects Coins out-of-order.
 
 YAML Configuration Files
 """"""""""""""""""""""""
