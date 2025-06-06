@@ -435,5 +435,29 @@ class Beacon(GridObject):
         return f'{self.__class__.__name__}({self.color!s})'
 
 
+class Coin(GridObject):
+    """An object to be collected."""
+
+    state_index = 0
+    color = Color.NONE
+    blocks_movement = False
+    blocks_vision = False
+    holdable = False
+
+    def __init__(self, order=None):
+        self.order = order  # Optional integer: 1, 2, ...
+
+    @classmethod
+    def can_be_represented_in_state(cls) -> bool:
+        return True
+
+    @classmethod
+    def num_states(cls) -> int:
+        return 1
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(order={self.order})'
+
+
 GridObjectFactory: TypeAlias = Callable[[], GridObject]
 """A callable which returns grid objects."""
