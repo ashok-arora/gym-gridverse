@@ -3,7 +3,7 @@ from typing import Dict, Generic, Set, Type, TypeVar
 
 import numpy as np
 
-from gym_gridverse.grid_object import Color, GridObject
+from gym_gridverse.grid_object import Color, GridObject, Coin
 from gym_gridverse.observation import Observation
 from gym_gridverse.representations.spaces import Space
 from gym_gridverse.spaces import ObservationSpace, StateSpace
@@ -269,6 +269,19 @@ def compact_grid_object_representation_convert(
     i = grid_object.type_index()
     j = grid_object.state_index
     k = grid_object.color.value
+
+    if isinstance(grid_object, Coin):
+        k = grid_object.order
+        if k is None:
+            k = 0
+        return np.array(
+            [
+                grid_object_type_map[i],
+                grid_object_state_map[i, j],
+                k,
+            ]     
+        )
+
     return np.array(
         [
             grid_object_type_map[i],
