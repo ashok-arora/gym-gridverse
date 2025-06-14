@@ -435,7 +435,7 @@ def collect_coin_transition(
     else:
         # if not ordered coin, dont collect
         if (not isinstance(state.agent.grid_object, Coin)) and isinstance(state.grid[state.agent.position], Coin):
-            if state.grid[state.agent.position].order is 0:
+            if state.grid[state.agent.position].order == 0:
                 state.agent.grid_object = Coin(0)
                 state.grid[state.agent.position] = Floor()
         elif isinstance(state.grid[state.agent.position], Coin) and state.grid[state.agent.position].order == (state.agent.grid_object.order + 1):
