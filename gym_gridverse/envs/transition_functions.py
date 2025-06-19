@@ -422,15 +422,26 @@ def teleport(
 def collect_coin_transition(
     state: State,
     action: Action,
+    ordered: bool,
     *,
     rng: Optional[rnd.Generator] = None,
 ):
     """collects and removes coins"""
+    if ordered is None or False:
+        if isinstance(state.grid[state.agent.position], Coin):
+            state.agent.grid_object = Coin(state.grid[state.agent.position].order)
 
-    if isinstance(state.grid[state.agent.position], Coin):
-        state.agent.grid_object = Coin(state.grid[state.agent.position].order)
+            state.grid[state.agent.position] = Floor()
+    else:
+        # if not ordered coin, dont collect
+        if (not isinstance(state.agent.grid_object, Coin)) and isinstance(state.grid[state.agent.position], Coin):
+            if state.grid[state.agent.position].order == 0:
+                state.agent.grid_object = Coin(0)
+                state.grid[state.agent.position] = Floor()
+        elif isinstance(state.grid[state.agent.position], Coin) and state.grid[state.agent.position].order == (state.agent.grid_object.order + 1):
+            state.agent.grid_object = Coin(state.agent.grid_object.order + 1)
+            state.grid[state.agent.position] = Floor()
 
-        state.grid[state.agent.position] = Floor()
 
 
 def factory(name: str, **kwargs) -> TransitionFunction:

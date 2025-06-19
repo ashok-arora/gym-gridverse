@@ -671,29 +671,22 @@ def collect_coin_reward_ordered(
 ):
     """Gives reward_good if the correct coin in order is collected, else reward_bad"""
 
-    # Case 1: First coin (order 0)
-    if state.agent.grid_object != next_state.agent.grid_object:
-        if isinstance(next_state.agent.grid_object, Coin):
-            if next_state.agent.grid_object.order == 0:
+    if (isinstance(state.agent.grid_object, Coin)):
+        if isinstance(state.grid[next_state.agent.position], Coin):
+            if (state.grid[next_state.agent.position].order == (state.agent.grid_object.order + 1)):
                 return reward_good
             else:
                 return reward_bad
-
-        # Case 2: Subsequent coins must be in increasing order
-        if (
-            isinstance(state.agent.grid_object, Coin)
-            and isinstance(next_state.agent.grid_object, Coin)
-        ):
-            if (
-                next_state.agent.grid_object.order
-                == state.agent.grid_object.order + 1
-            ):
+        else:
+            return 0.0
+    else:
+        if isinstance(state.grid[next_state.agent.position], Coin):
+            if state.grid[next_state.agent.position].order == 0:
                 return reward_good
             else:
                 return reward_bad
-
-    # No coin collected
-    return 0.0    
+        else:
+            return 0.0
 
 
 @reward_function_registry.register

@@ -206,6 +206,7 @@ def main():
             env.observation, return_rgb_array=True, **hud_info
         )
 
+
         state_data_builder.append0(state_image)
         observation_data_builder.append0(observation_image)
 
@@ -227,6 +228,10 @@ def main():
                         'ret': ret,
                         'done': done,
                     }
+                for l in env.state.grid.objects:
+                    print(l)
+                print()
+                # print(env.state.grid.objects)
 
             if command is Controls.HIDE_STATE:
                 state_viewer.flip_visibility()
